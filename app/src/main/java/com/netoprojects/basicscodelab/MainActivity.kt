@@ -1,5 +1,6 @@
 package com.netoprojects.basicscodelab
 
+import android.content.res.Configuration.UI_MODE_NIGHT_YES
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -8,6 +9,8 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.Button
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.OutlinedButton
@@ -17,6 +20,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -37,7 +41,7 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun MyApp() {
-    var shouldShowOnboarding by remember { mutableStateOf(true) }
+    var shouldShowOnboarding by rememberSaveable { mutableStateOf(true) }
 
     if (shouldShowOnboarding) {
         OnboardingScreen(onContinueClicked = { shouldShowOnboarding = false })
@@ -47,12 +51,15 @@ fun MyApp() {
 }
 
 @Composable
-fun Greetings(names: List<String> = listOf("World", "Compose")) {
+fun Greetings(names: List<String> = List(1000) { "$it"}) {
     // A surface container using the 'background' color from the theme
     Surface(color = MaterialTheme.colors.background) {
-        Column {
-            for (name in names) {
-                Greeting(name)
+        Column(modifier = Modifier.padding(vertical = 4.dp)) {
+            LazyColumn {
+                item { Text("Header")}
+                items(names) { name ->
+                    Greeting(name)
+                }
             }
         }
     }
@@ -103,6 +110,7 @@ fun OnboardingScreen(
     }
 }
 
+@Preview(showBackground = true, widthDp = 320, heightDp = 320, uiMode = UI_MODE_NIGHT_YES)
 @Preview(showBackground = true, widthDp = 320, heightDp = 320)
 @Composable
 fun OnboardingPreview() {
